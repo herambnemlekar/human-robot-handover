@@ -54,7 +54,6 @@ def on_message(ws, message, num=[0,0,0,0], r=skeleton()):
 			print("Publishing...")
 			rospy.loginfo(r)
 			pub.publish(r)
-			rospy.loginfo(r)
 	#print(num)
 
 

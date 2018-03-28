@@ -1,0 +1,13 @@
+<launch>
+    <arg name="otp" default="False"/>
+    <rosparam param="otp" subst_value="True">$(arg otp)</rosparam>
+    <node pkg="handover" type="pyclient.py" name="kinect_data" required="true" />
+
+
+    <node pkg="handover" type="OtpGenerator.py" name="OtpGenerator" required="true" output="screen"/>
+
+    <node pkg="handover" type="trina_interface.py" name="MoveTrina" required="true" output="screen" args="$(arg otp)"/>
+
+
+
+</launch>

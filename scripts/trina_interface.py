@@ -2,7 +2,7 @@
 import rospy
 import sys, time, os
 import numpy as np
-from kinect_data.msg import skeleton
+from handover.msg import skeleton
 from std_msgs.msg import Float64MultiArray
 from geometry_msgs.msg import PointStamped
 # from baxter_pykdl import baxter_kinematics
@@ -10,6 +10,7 @@ from geometry_msgs.msg import PointStamped
 class MoveTrina:
     
     def __init__(self):
+        self.flag = rospy.get_param('otp')
 
         self.goal_pub = rospy.Publisher("/goal_location", PointStamped, queue_size=1)
 
@@ -18,16 +19,43 @@ class MoveTrina:
         # self.kin = baxter_kinematics('right')
 
         self.promp_goal = np.array(np.zeros(3))
-
+        self.promp_goal_trina = [None, None, None]
+        
         self.otp_sub = rospy.Subscriber("/otp_estimate", PointStamped, self.callback1, queue_size=1)
         self.promp_sub = rospy.Subscriber("/promp_data", Float64MultiArray, self.callback2, queue_size = 1)
 
     def callback1(self, data):
         self.otp = data
         self.w = self.otp.header.stamp.nsecs
-        self.otp_goal_trina = np.array([self.otp.point.z + 0.2, self.otp.point.x, self.otp.point.y + 1.365])
+        self.otp_goal_trina = np.array([self.otp.point.z + 0.115, self.otp.point.x, self.otp.point.y + 1.65])
 
-        print "otp"
+        #print "otp-rx"
+
+        if(self.flag == True):
+            if self.promp_goal_trina[0]:
+                self.goal = ((1 - self.w)*self.promp_goal_trina) + (self.w*self.otp_goal_trina) # self.promp_goal_trina
+                # print "otp+promp-used"
+            else:
+                self.goal = self.otp_goal_trina
+                # print "waiting for p"
+
+            self.goal_location = PointStamped()
+            self.goal_location.point.x = self.goal[0]
+            self.goal_location.point.y = self.goal[1]
+            self.goal_location.point.z = self.goal[2]
+
+            self.goal_pub.publish(self.goal_location)
+
+        else:
+            if self.promp_goal_trina[0]:
+                self.goal = self.promp_goal_trina
+
+                self.goal_location = PointStamped()
+                self.goal_location.point.x = self.goal[0]
+                self.goal_location.point.y = self.goal[1]
+                self.goal_location.point.z = self.goal[2]
+
+                self.goal_pub.publish(self.goal_location)
 
     def callback2(self, data):
         self.promp = data
@@ -42,23 +70,9 @@ class MoveTrina:
             self.promp_goal[i] = self.promp.data[((i+1)*99) - 1]
 
         # self.promp_goal_trina = np.array([self.promp_goal[0], self.promp_goal[1], self.promp_goal[2] + 87.5])
-        self.promp_goal_trina = np.array([self.promp_goal[2] + 0.2, self.promp_goal[0], self.promp_goal[1] + 1.365])
+        self.promp_goal_trina = np.array([self.promp_goal[2] + 0.18 , self.promp_goal[0] , self.promp_goal[1] + 1.65])
 
-        print "promp"
-
-        if self.w > 0.4:
-            self.goal = self.promp_goal_trina # (self.w*self.promp_goal_trina) + ((1-self.w)*self.otp_goal_trina)
-        else:
-            self.goal = self.otp_goal_trina
-
-        self.goal_location = PointStamped()
-        self.goal_location.point.x = self.goal[0]
-        self.goal_location.point.y = self.goal[1]
-        self.goal_location.point.z = self.goal[2]
-
-        self.goal_pub.publish(self.goal_location)
-
-        # self.move(self.goal_location)
+        #print "promp-rx"
 
     def changeByAngles(self,change_angles, angles):
         angles['right_s0']=change_angles[0]
@@ -80,7 +94,7 @@ class MoveTrina:
 def main(args):  
     rospy.init_node('MoveTrina', anonymous=True)
     mt = MoveTrina()   
-
+    
     try:
         rospy.spin()
     except KeyboardInterrupt:

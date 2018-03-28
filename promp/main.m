@@ -20,6 +20,8 @@ data_ias = format_ias_data(data);
 % create the ProMP (ProMP) here
 ProMP = regression_pmp(data_ias, 30, 'GaussianFeatures');
 
+% close all;
+
 %% Online ProMP
 
 % create a parameter structure that is useful for several functions
@@ -29,7 +31,7 @@ param.observedJointPos = [1 2 3];
 param.observedJointVel = [];
  
 dataSet = 1;
- 
+
 
 % in KF context this says how much noise there is in the observation
 stdev = 0.005;
@@ -41,53 +43,41 @@ rosinit;
 sub = rossubscriber('/wrist_data');
 pub = rospublisher('/promp_data', 'std_msgs/Float64MultiArray');
 msg2 = rosmessage(pub);
-
 otp_weight = [];
-
 while 1
     % receive the human data
     msg1 = receive(sub,1);
-    
-    
-    if msg1.Header.Stamp.Nsec < 100
-        % point data
+    if msg1.Header.Stamp.Nsec < 60
+
         point = [msg1.Point.X, msg1.Point.Y, msg1.Point.Z];
-        
         otp_weight = [otp_weight, [msg1.Header.Stamp.Nsec; point']];
-        
-        % define the points in the data set to be measured, and update the object
+
         observed_data_index = 100 - msg1.Header.Stamp.Nsec;
         obs.measuredIndexes(observed_data_index, data, point);
-
         [kf1] = mainloop(h, ProMP, param, obs);
-        
         M = [];
-%         for i = 4:7
+
         for i = 1:3
             M = [M, kf1(i).q_mean];
         end
-        
         msg2.Data = M;
         send(pub,msg2);
-        
-        if msg1.Header.Stamp.Nsec < 35
+        if msg1.Header.Stamp.Nsec < 30
             break;
-        end
-        
+        end   
     end
-    
 end
 
 rosshutdown
- 
+
 %% Offline ProMP
 % create a parameter structure that is useful for several functions
 param.nTraj = data(1).nSize;
 param.nTotalJoints = ProMP.nJoints;
 param.observedJointPos = [1 2 3];
-param.observedJointVel = [ ];
+param.observedJointVel = [];
 
-dataSet = 3;
+dataSet = 12;
 
 % in KF context this says how much noise there is in the observation
 stdev = 0.005; 
@@ -96,7 +86,7 @@ stdev = 0.005;
 obs = Observation2(dataSet , stdev, param);            
               
 % define the points in the data set to be measured, and update the object
-observed_data_index = 40;              
+observed_data_index = 50;              
 obs.measuredIndexes(observed_data_index, data);
             
 %plot test data
@@ -109,14 +99,21 @@ end
 
 [kf1] = mainloop2(h, ProMP, param, obs);
 
+M = [];
+for i = 4:10
+    M = [M, kf1(i).q_mean];
+end
 
- 
- 
- 
- 
- 
- 
- 
- 
- 
-
+rosinit;
+pub = rospublisher('/promp_data', 'std_msgs/Float64MultiArray');
+msg2 = rosmessage(pub);
+msg2.Data = M;
+tic
+t = 0;
+while t < 5
+    send(pub,msg2);
+    t = toc;
+end
+% send(pub,msg2);
+pause(5);
+rosshutdown;

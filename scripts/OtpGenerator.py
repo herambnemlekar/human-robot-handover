@@ -2,10 +2,11 @@
 import rospy
 import sys, time, os
 import numpy as np
-from kinect_data.msg import skeleton
+from handover.msg import skeleton
 from std_msgs.msg import Float64MultiArray
 from geometry_msgs.msg import PointStamped
-
+import baxter_interface
+import csv
 
 class OtpGenerator:
 
@@ -23,9 +24,13 @@ class OtpGenerator:
         self.w = 1.0    #Weight factor for determining the confidence in the dynamic OTP
         self.i = 0.0    #Initialization for otp loop
         self.gain = 0.75  #Gain for adjusting weights
-    
+        self.duration = 0.0
+        self.Z = None   
+
         #Subscribing to the skeleton data from kinect
-        self.data_sub = rospy.Subscriber("skeleton_data", skeleton, self.static, queue_size = 1)    
+        self.data_sub = rospy.Subscriber("skeleton_data", skeleton, self.static, queue_size = 1)   
+
+        self.previous_baxarm_pos = np.array([0., 0., 0., 1.])
         
     def static(self,data):
 
@@ -75,7 +80,11 @@ class OtpGenerator:
             #Total time of the demonstration
             self.t_goal = self.t_demo   
         
-            if (self.e_old - self.e_new) > 0.0035:   #Arbitrary threshold for detecting movement
+            if (self.e_old - self.e_new) > 0.003:   #Arbitrary threshold for detecting movement
+
+
+                if self.w == 1:
+                    self.start_time = time.time()
 
                 #Time step
                 dt = self.D[1, 3] - self.D[0, 3]
@@ -105,13 +114,13 @@ class OtpGenerator:
                 self.Z.point.y = self.P_goal[0,1]
                 self.Z.point.z = self.P_goal[0,2]
 
-                self.goal_pub.publish(self.Z)
+                #self.goal_pub.publish(self.Z)
                 
                 #with open('goaldata2.txt','a') as file:
                 #   file.write(str(self.P_goal)+"\n")
                                 
             
-            elif self.w<0.25:
+            if self.w<0.25:
                 self.P_goal = self.P_obj
                 
                 otp_data = np.array([self.P_goal[0,0],self.P_goal[0,1],self.P_goal[0,2],self.t_goal])
@@ -123,8 +132,10 @@ class OtpGenerator:
                 self.Z.point.y = self.P_goal[0,1]
                 self.Z.point.z = self.P_goal[0,2]
 
+            if self.Z:
                 self.goal_pub.publish(self.Z)
-                print("else",self.P_goal)
+                
+                #print("else",self.P_goal)
 
                 #with open('goaldata2.txt','a') as file:
                 #   file.write(str(self.P_goal)+"\n")
@@ -140,6 +151,27 @@ class OtpGenerator:
         self.P.point.z = self.P_rw[0,2]
 
         self.wrist_pub.publish(self.P)
+
+        limb = baxter_interface.Limb('right')
+        baxarm_end = limb.endpoint_pose()
+        baxarm_pos = baxarm_end['position']
+        baxarm_pos = np.array([baxarm_pos.x, baxarm_pos.y, baxarm_pos.z, 1])
+        tf = np.array([[0, 1, 0, 0], [0, 0, 1, -0.55], [1, 0, 0, -0.21], [0, 0, 0, 1]])
+        baxarm_pos = np.matmul(tf,baxarm_pos)
+
+
+        if self.w < 0.1 and (self.e_old - self.e_new) < 0.0025 and ((np.linalg.norm(baxarm_pos[0:3] - self.previous_baxarm_pos[0:3])) < 0.0005) and self.duration==0:
+            time_now = time.time()
+            self.duration = time_now - self.start_time
+            self.error = np.linalg.norm(self.P_rw[0,0:3] - baxarm_pos[0:3])
+            print "will now print"
+            # print self.P_goal
+            # print self.P_obj
+            # print self.otp_s
+            csv_file  = open('Experiment_Data.csv', 'a')
+            csv_file.write(str(self.duration) + "," + str(self.error) + "\n")
+        
+        self.previous_baxarm_pos = baxarm_pos
                 
         
 def main(args):  
