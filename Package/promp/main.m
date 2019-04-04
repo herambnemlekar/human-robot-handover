@@ -1,4 +1,4 @@
-%% Train the ProMP
+ %% Train the ProMP
 
 clear; close all; clc; dbstop if error;
 addpath('func/');
