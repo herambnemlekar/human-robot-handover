@@ -11,6 +11,11 @@ for i = 1:l
     z(1,i) = hand(3);
     % hand(1) = Subject data in the X-axis, hand(2) = Subject data in the Y-axis, hand(3) = Subject data in the Z-axis
 end
+for i=1:l-1
+a(1)=(x(1,60846)-x(1,60845))^2;
+ed(i)=sqrt(((y(1,i+1)-y(1,i))^2)+((x(1,i+1)-x(1,i))^2)+((z(1,i+1)-z(1,i))^2));
+%ed(i)=((y(1,i+1)^2)+(x(1,i+1)^2)+(z(1,i+1)^2))^(1/2);
+end
 figure(1)
 index = 1:l;
 % scatter(index,y,20) % plot data points
@@ -56,6 +61,8 @@ for i = 1:length(maxtab)
     else if (abs(maxtabz(k,1)-maxtaby(j,1))< tolerance)&& ((abs(mintabz(k,1)-maxtab(i,1))< tolerance2)||(abs(maxtab(i,1)-maxtaby(j,1))< tolerance2))
         xline((mintabz(k,1)+maxtaby(j,1))/2);
         end
+        
+    
     end
         end  
     end
