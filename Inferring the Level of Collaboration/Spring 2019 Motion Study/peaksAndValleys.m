@@ -4,6 +4,8 @@ clear; close all; clc;
 load('DataPilot1\subject1C'); % Load the subject data. C=Collaborative, NC=Non Collaborative
 l = length(human.rw); 
 y = zeros(1,l);
+x = zeros(1,l);
+z = zeros(1,l);
 for i = 1:l   
     hand = human.rw(i,1:3);
     y(1,i) = hand(2);
@@ -12,15 +14,14 @@ for i = 1:l
     % hand(1) = Subject data in the X-axis, hand(2) = Subject data in the Y-axis, hand(3) = Subject data in the Z-axis
 end
 for i=1:l-1
-a(1)=(x(1,60846)-x(1,60845))^2;
-ed(i)=sqrt(((y(1,i+1)-y(1,i))^2)+((x(1,i+1)-x(1,i))^2)+((z(1,i+1)-z(1,i))^2));
+    a(1)=(x(1,60846)-x(1,60845))^2;
+    ed(i)=sqrt(((y(1,i+1)-y(1,i))^2)+((x(1,i+1)-x(1,i))^2)+((z(1,i+1)-z(1,i))^2));
 %ed(i)=((y(1,i+1)^2)+(x(1,i+1)^2)+(z(1,i+1)^2))^(1/2);
 end
 figure(1)
 index = 1:l;
 % scatter(index,y,20) % plot data points
 % hold on
-
 plot(index,x,'m');
 hold on;
 plot(index,y,'b');
@@ -48,22 +49,20 @@ tolerance2 = 1000;
 for i = 1:length(maxtab)
     for j= 1:length(maxtaby)
         for k=1:length(mintabz)
-    if (abs(maxtab(i,1)-maxtaby(j,1))< tolerance)&& ((abs(maxtaby(j,1)-mintabz(k,1))< tolerance2)||(abs(maxtab(i,1)-mintabz(k,1))< tolerance2))
+            if (abs(maxtab(i,1)-maxtaby(j,1))< tolerance)&& ((abs(maxtaby(j,1)-mintabz(k,1))< tolerance2)||(abs(maxtab(i,1)-mintabz(k,1))< tolerance2))
 %         disp('Peak x:')
 %         disp(maxtab(i,1));
-        xline((maxtab(i,1)+maxtaby(j,1))/2);
+                xline((maxtab(i,1)+maxtaby(j,1))/2);
 %         disp('Peak y:')
 %         disp(maxtaby(j,1))
 %         disp('Peak z:')
 %         disp(mintabz(k,1))
 %         if (abs(maxtab(i,1)-maxtaby(j,1))< tolerance)
 %             xline((maxtab(i,1)+maxtaby(j,1))/2);
-    else if (abs(maxtabz(k,1)-maxtaby(j,1))< tolerance)&& ((abs(mintabz(k,1)-maxtab(i,1))< tolerance2)||(abs(maxtab(i,1)-maxtaby(j,1))< tolerance2))
-        xline((mintabz(k,1)+maxtaby(j,1))/2);
+            else if (abs(maxtabz(k,1)-maxtaby(j,1))< tolerance)&& ((abs(mintabz(k,1)-maxtab(i,1))< tolerance2)||(abs(maxtab(i,1)-maxtaby(j,1))< tolerance2))
+                    xline((mintabz(k,1)+maxtaby(j,1))/2);
+                end
+            end
         end
-        
-    
-    end
-        end  
     end
 end
