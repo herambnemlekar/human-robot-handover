@@ -3,8 +3,10 @@
 % finds the peaks and valleys of the plot.
 clear; close all; clc; 
 load('DataPilot1\subject1C'); % Load the subject data. C=Collaborative, NC=Non Collaborative
-len = length(human.rw); 
+len = length(human.rw);
+x = zeros(1,len);
 y = zeros(1,len);
+z = zeros(1,len);
 for i = 1:len   
     hand = human.rw(i,1:3);
     y(1,i) = hand(2);
@@ -13,7 +15,7 @@ for i = 1:len
 
     % hand(1) = Subject data in the X-axis, hand(2) = Subject data in the Y-axis, hand(3) = Subject data in the Z-axis
 end
-
+dist = zeros(1,len-1);
 for i=1:1:len-1
     x_ed = single((x(1,i+1)- x(1,i))^(2));
     y_ed = single((y(1,i+1)- y(1,i))^(2));
