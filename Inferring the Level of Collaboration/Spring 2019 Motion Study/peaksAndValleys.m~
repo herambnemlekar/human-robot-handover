@@ -26,8 +26,8 @@ for i=1:1:len-1
 %     dist(i) =sqrt((single(x1(1,i+1)- x1(1,i))^(2))+ (single(y1(1,i+1)- y1(1,i))^(2))+(single(z1(1,i+1)- z1(1,i))^(2)));
 end
 
-% Velocity
-vel = smoothdata(diff(smoothdata(rms([x',y',z'],2))));
+dist = smoothdata(rms([x',y',z'],2));
+vel = smoothdata(diff(dist));
 
 figure(1) %EUCLIDIAN DISTANCE PLOT
 index1 = 1:(len-1);
