@@ -1,7 +1,7 @@
 % This script generate data plot of each study subject. Additionally it 
 % finds the peaks and valleys of the plot.
 clear; close all; clc; 
-load('DataPilot1\subject1C'); % Load the subject data. C=Collaborative, NC=Non Collaborative
+load('DataPilot1/subject1C'); % Load the subject data. C=Collaborative, NC=Non Collaborative
 l = length(human.rw); 
 y = zeros(1,l);
 for i = 1:l   
