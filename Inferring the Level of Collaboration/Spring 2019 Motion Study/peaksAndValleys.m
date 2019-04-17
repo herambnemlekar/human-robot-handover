@@ -43,11 +43,15 @@ index1 = 1:(len-1);
 
 plot(index,dist)
 hold on
+grid on
 findpeaks(dist,'MinPeakDistance',1300,'Threshold',0.09,'MinPeakProminence',0.05)
 title('Distance')
 figure(2)
-plot(index1,vel)
+plot(index1,normvel)
+hold on
+yline(0)
 title('Velocity')
+grid on
 
 
 % [maxtabdist, mintabdist] = peakdet(dist, 0.25);
