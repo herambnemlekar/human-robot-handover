@@ -1,7 +1,7 @@
 
 % This script generate data plot of each study subject. Additionally it 
 % finds the peaks and valleys of the plot.
-clear; close all; clc; 
+%clear; close all; clc; 
 
 load('DataPilot1/subject1C'); % Load the subject data. C=Collaborative, NC=Non Collaborative
 len = length(human.rw);
@@ -22,6 +22,7 @@ dist = smoothdata(rms([x',y',z'],2));
 
 % Velocity
 vel = smoothdata(diff(dist));
+normvel = normalize(vel);
 
 %--------------------------------------------------------------------------
 % Distance calculation commented for now, delete at the end if not required
@@ -37,11 +38,20 @@ vel = smoothdata(diff(dist));
 %--------------------------------------------------------------------------
 
 figure(1) %EUCLIDIAN DISTANCE PLOT
+index = 1:len;
 index1 = 1:(len-1);
 
-plot(index1,dist);
- hold on;
+plot(index,dist)
+hold on
 findpeaks(dist,'MinPeakDistance',1300,'Threshold',0.09,'MinPeakProminence',0.05)
+title('Distance')
+figure(2)
+plot(index1,vel)
+hold on
+plot(index1,normvel)
+title('Velocity')
+
+
 % [maxtabdist, mintabdist] = peakdet(dist, 0.25);
 % scatter(maxtabdist(:,1), maxtabdist(:,2), 150, 'r*');
 % m(index1)=-0.5
@@ -54,8 +64,7 @@ findpeaks(dist,'MinPeakDistance',1300,'Threshold',0.09,'MinPeakProminence',0.05)
 % end
 % disp(m);
 % plot(index1,m)
-figure(2) 
-index = 1:len;
+figure(3) 
 hold on
 plot(index,x,'m');
 hold on;
