@@ -1,7 +1,7 @@
 
 % This script generate data plot of each study subject. Additionally it 
 % finds the peaks and valleys of the plot.
-%clear; close all; clc; 
+clear; close all; clc; 
 
 load('DataPilot1/subject1C'); % Load the subject data. C=Collaborative, NC=Non Collaborative
 len = length(human.rw);
@@ -47,9 +47,7 @@ findpeaks(dist,'MinPeakDistance',1300,'Threshold',0.09,'MinPeakProminence',0.05)
 title('Distance')
 figure(2)
 plot(index1,vel)
-hold on
-plot(index1,normvel)
-title('Velocity')
+
 
 
 % [maxtabdist, mintabdist] = peakdet(dist, 0.25);
