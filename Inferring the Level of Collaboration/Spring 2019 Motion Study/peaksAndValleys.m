@@ -16,18 +16,25 @@ for i = 1:len
 
     % hand(1) = Subject data in the X-axis, hand(2) = Subject data in the Y-axis, hand(3) = Subject data in the Z-axis
 end
-dist = zeros(1,len-1);
-for i=1:1:len-1
-    x_ed = single((x(1,i+1)- x(1,i))^(2));
-    y_ed = single((y(1,i+1)- y(1,i))^(2));
-    z_ed = single((z(1,i+1)- z(1,i))^(2));
-    dist(i) = (sqrt (x_ed + y_ed + z_ed));
-    
-%     dist(i) =sqrt((single(x1(1,i+1)- x1(1,i))^(2))+ (single(y1(1,i+1)- y1(1,i))^(2))+(single(z1(1,i+1)- z1(1,i))^(2)));
-end
+
+% Distance
+dist = smoothdata(rms([x',y',z'],2));
 
 % Velocity
-vel = smoothdata(diff(smoothdata(rms([x',y',z'],2))));
+vel = smoothdata(diff(dist));
+
+%--------------------------------------------------------------------------
+% Distance calculation commented for now, delete at the end if not required
+% dist = zeros(1,len-1);
+% for i=1:1:len-1
+%     x_ed = single((x(1,i+1)- x(1,i))^(2));
+%     y_ed = single((y(1,i+1)- y(1,i))^(2));
+%     z_ed = single((z(1,i+1)- z(1,i))^(2));
+%     dist(i) = (sqrt (x_ed + y_ed + z_ed));
+%     
+% %     dist(i) =sqrt((single(x1(1,i+1)- x1(1,i))^(2))+ (single(y1(1,i+1)- y1(1,i))^(2))+(single(z1(1,i+1)- z1(1,i))^(2)));
+% end
+%--------------------------------------------------------------------------
 
 figure(1) %EUCLIDIAN DISTANCE PLOT
 index1 = 1:(len-1);
