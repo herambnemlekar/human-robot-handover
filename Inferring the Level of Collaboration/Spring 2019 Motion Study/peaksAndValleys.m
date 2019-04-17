@@ -47,7 +47,7 @@ findpeaks(dist,'MinPeakDistance',1300,'Threshold',0.09,'MinPeakProminence',0.05)
 title('Distance')
 figure(2)
 plot(index1,vel)
-
+title('Velocity')
 
 
 % [maxtabdist, mintabdist] = peakdet(dist, 0.25);
