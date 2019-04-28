@@ -2,7 +2,7 @@
 % finds the peaks and valleys of the plot.
 clear; close all; clc; 
 subj = 10;
-for i = 1:subj
+for i = [1,3:6,8:10]
     load(['Actual1/subject',num2str(i),'C.mat'])
     Human{i} = human;
     len = length(human.rw);
