@@ -8,6 +8,7 @@ for i = 1:subj
     len = length(human.rw);
     right = human.rw(:,[1,3,2]);
     left = human.lw(:,[1,3,2]);
+    right(:,1) = -1.*right(:,1); left(:,1) = -1.*left(:,1);
     o = quat2eul(human.o);
     
     Right = smoothdata(right,1,'SmoothingFactor',0.05);
