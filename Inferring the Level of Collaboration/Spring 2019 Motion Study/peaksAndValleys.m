@@ -27,7 +27,7 @@ for i = 1:subj
     x_sm = smoothdata(x,'SmoothingFactor',0.05);
     y_sm = smoothdata(y,'SmoothingFactor',0.05);
     z_sm = smoothdata(z,'SmoothingFactor',0.05);
-    Euler_x = smoothdata(o(:,1),'SmoothingFactor',0.1);
+%     Euler_x = smoothdata(o(:,1),'SmoothingFactor',0.1);
 %     Euler_y = smoothdata(o(:,2),'SmoothingFactor',0.1);
 %     Euler_z = smoothdata(o(:,3),'SmoothingFactor',0.1);
 %     plot(index,Euler_x);
