@@ -8,8 +8,6 @@ load('HumanC.mat')
      scatter3(otpr(:,1),otpr(:,2),otpr(:,3),30)
      grid on
  end
- 
- %Instances when right hand was used
  otpr = HumanC{1,10}.otp;
  scatter3(otpr([1,5:11],1),otpr([1,5:11],2),otpr([1,5:11],3),30)
  otpr = HumanC{1,3}.otp;
@@ -34,11 +32,10 @@ load('HumanC.mat')
      grid on
  end
  
- %Instances when right hand was used
  otp = Human{1,3}.otp;
  scatter3(otp(1:6,1),otp(1:6,2),otp(1:6,3),30) 
  
- %Instances when left hand was used
+ %Instances when right hand was used
  load('HumanNC_left.mat')
  otp1 = Humanl{1,3}.otp;
  scatter3(otp1(7:12,1),otp1(7:12,2),otp1(7:12,3),30)
