@@ -41,12 +41,13 @@ for i = [1,3:6,8:10]
     HumanC{i}.otp = human.rw(otp_ind,:);
     
     figure(2)
-    hold on
     o = smoothdata(o,1,'SmoothingFactor',0.05);
     plot(1:length(o),o(:,1),'b','Linewidth',1.5);
+    hold on
     plot(1:length(o),o(:,2),'g','Linewidth',1.5);
     plot(1:length(o),o(:,3),'r','Linewidth',1.5);
     legend('Tilt left','Turn left (right)','Look up')
+    hold off
 end
 
 save('HumanC.mat','HumanC')
