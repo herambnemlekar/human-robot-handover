@@ -1,7 +1,48 @@
- load('Human.mat')
- for i = 1:length(Human)
-     otp = Human{i}.otp;
+%% OTP for Collaborative Tasks
+load('HumanC.mat')
+ figure(1)
+ title("OTP for Collaborative Tasks");
+ for i = [1,4:6,8:9] 
+     otpr = HumanC{1,i}.otp;
      hold on
-     scatter3(otp(:,1),otp(:,2),otp(:,3),30,'b', 'filled')
+     scatter3(otpr(:,1),otpr(:,2),otpr(:,3),30)
      grid on
  end
+ 
+ %Instances when right hand was used
+ otpr = HumanC{1,10}.otp;
+ scatter3(otpr([1,5:11],1),otpr([1,5:11],2),otpr([1,5:11],3),30)
+ otpr = HumanC{1,3}.otp;
+ scatter3(otpr([1,2,6:12],1),otpr([1,2,6:12],2),otpr([1,2,6:12],3),30)
+ 
+ %Instances when left hand was used
+ load('HumanC_left.mat')
+ otpl = HumanCl{1,10}.otp;
+ scatter3(otpl([2,3,4,12],1),otpl([2,3,4,12],2),otpl([2,3,4,12],3),30)
+ otpl = HumanCl{1,3}.otp;
+ scatter3(otpl([3,4,5],1),otpl([3,4,5],2),otpl([3,4,5],3),30);
+ hold off 
+
+ %% OTP for Non Collaborative Tasks
+ load('HumanNC.mat')
+ figure(2)
+ title("OTP for Non-Collaborative Tasks");
+ for i = [1,4:6,8:9] 
+     otp = Human{1,i}.otp;
+     hold on
+     scatter3(otp(:,1),otp(:,2),otp(:,3),30)
+     grid on
+ end
+ 
+ %Instances when right hand was used
+ otp = Human{1,3}.otp;
+ scatter3(otp(1:6,1),otp(1:6,2),otp(1:6,3),30) 
+ 
+ %Instances when left hand was used
+ load('HumanNC_left.mat')
+ otp1 = Humanl{1,3}.otp;
+ scatter3(otp1(7:12,1),otp1(7:12,2),otp1(7:12,3),30)
+ otp1 = Humanl{1,10}.otp;
+ scatter3(otp1(:,1),otp1(:,2),otp1(:,3),30);
+ hold off
+ 
