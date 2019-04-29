@@ -8,7 +8,7 @@ for i = [1,3:6,8:10]
     right = human.rw(:,[1,3,2]);
     left = human.lw(:,[1,3,2]);
     right(:,1) = -1.*right(:,1); left(:,1) = -1.*left(:,1);
-    o = quat2eul(human.o);
+    o = rad2deg(quat2eul(human.o));
     
     Right = smoothdata(right,1,'SmoothingFactor',0.05);
     Left = smoothdata(left,1,'SmoothingFactor',0.05);
@@ -33,6 +33,16 @@ for i = [1,3:6,8:10]
     
     %Human{i}.otp = human.rw(otp_ind,:)
     Humanl{i}.otp = human.lw(otp_ind,:)
+    
+    figure(2)
+    o = smoothdata(o,1,'SmoothingFactor',0.05);
+    plot(1:length(o),o(:,1),'b','Linewidth',1.5);
+    hold on
+    plot(1:length(o),o(:,2),'g','Linewidth',1.5);
+    plot(1:length(o),o(:,3),'r','Linewidth',1.5);
+    legend('Tilt left','Turn left (right)','Look up')
+    hold off
+    
 end
 
 save('HumanNC_left.mat','Humanl')
